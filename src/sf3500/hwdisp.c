@@ -7,6 +7,7 @@
  */
 
 #include "hwdisp.h"
+#include "tfenv.h"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -48,9 +49,17 @@ int hwdisp_init(void) {
      * check on driver.so is testing for. The real usable library on SF3500
      * is driver_sf3500.so (confirmed real ELF, exports video_drivers_init/
      * video_driver_deinit/video_driver_disp_frame - verified via nm -D). */
-    g_handle = dlopen("/mnt/sdcard/cubegm/driver_sf3500.so", RTLD_NOW | RTLD_GLOBAL);
+    {
+        char dev[64], pres[64];
+        if (!tfenv_get("TF_DEVICE", dev, sizeof(dev))) snprintf(dev, sizeof(dev), "unknown");
+        if (!tfenv_get("TF_PRESENT", pres, sizeof(pres))) snprintf(pres, sizeof(pres), "unknown");
+        fprintf(stderr, "hwdisp: device %s, present %s, driver %s\n", dev, pres, tfdriver_path());
+        if (strcmp(pres, "dispframe") != 0 && strcmp(pres, "unknown") != 0)
+            fprintf(stderr, "hwdisp: warning: this build presents frames with the driver's disp_frame call only\n");
+    }
+    g_handle = dlopen(tfdriver_path(), RTLD_NOW | RTLD_GLOBAL);
     if (!g_handle) {
-        fprintf(stderr, "hwdisp: dlopen failed: %s\n", dlerror());
+        fprintf(stderr, "hwdisp: dlopen %s failed: %s\n", tfdriver_path(), dlerror());
         return -1;
     }
 
@@ -73,7 +82,7 @@ int hwdisp_init(void) {
     }
 
     g_active = 1;
-    fprintf(stderr, "hwdisp: HW path active (init rv=%d)\n", rv);
+    fprintf(stderr, "hwdisp: HW path active (init rv=%d, driver %s)\n", rv, tfdriver_path());
     return 0;
 }
 
