@@ -4,6 +4,12 @@ PHL stands for Portable Homebrew Library
 #ifndef PHL_H
 #define PHL_H
 
+/* Every other backend's own headers pull in NULL transitively (SDL.h, libctru,
+ * etc.) - this one doesn't link anything that does, so it needs it directly. */
+#ifdef _SF3500
+#include <stddef.h>
+#endif
+
 #ifdef _3DS
 	#include "3ds/system.h"
 	#include "3ds/graphics.h"
@@ -23,6 +29,13 @@ PHL stands for Portable Homebrew Library
 	#include "psp/graphics.h"
 	#include "psp/input.h"
 	#include "psp/audio.h"
+#endif
+
+#ifdef _SF3500
+	#include "sf3500/system.h"
+	#include "sf3500/graphics.h"
+	#include "sf3500/input.h"
+	#include "sf3500/audio.h"
 #endif
 
 #ifdef _SDL

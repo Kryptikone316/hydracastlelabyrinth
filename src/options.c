@@ -8,7 +8,7 @@
 char page = 0;
 int optCursor = 0;
 int lastOption = -1;
-#ifdef _SDL
+#if defined(_SDL) || defined(_SF3500)
 int musicType = 1;
 int getMusicType()
 {
@@ -224,8 +224,17 @@ int optionsStep()
 					if (getXBRZ() == 0) {
 						setXBRZ(1);
 					}else{
-						setXBRZ(0); 
+						setXBRZ(0);
 					}
+				}
+			#endif
+
+			#ifdef _SF3500
+				// Music volume - no MIDI toggle (always OGG) or xBRZ
+				// (unsupported) on this backend, so just the one entry.
+				if (optCursor == 2) {
+					music_volume = (music_volume+1)%5;
+					PHL_MusicVolume(0.25f * music_volume);
 				}
 			#endif
 			
@@ -364,7 +373,16 @@ void optionsDraw()
 			ydraw += ystep;
 			optioncount++;
 		#endif
-		
+
+		#ifdef _SF3500
+			PHL_DrawTextBold("MUSIC", xleft, ydraw, YELLOW);
+			char buff[50];
+			sprintf(buff, "%d%%", music_volume*25);
+			PHL_DrawTextBold(buff, xright, ydraw, YELLOW);
+			ydraw += ystep;
+			optioncount++;
+		#endif
+
 		PHL_DrawTextBold("BACK", xleft, ydraw, YELLOW);
 		
 		if (lastOption == -1) {

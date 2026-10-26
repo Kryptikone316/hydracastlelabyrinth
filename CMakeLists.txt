@@ -14,6 +14,7 @@ option(PANDORA "Set to ON if targeting an OpenPandora device" ${PANDORA})
 option(ODROID "Set to ON if targeting an ODroid device" ${ODROID})
 option(PYRA "Set to ON if targeting a DragonBox Pyra device" ${PYRA})
 option(CHIP "Set to ON if targeting a PocketCHIP device" ${CHIP})
+option(SF3500 "Set to ON if targeting a Datafrog SF3500 handheld" ${SF3500})
 option(USE_CCACHE "Set to ON to use ccache if present in the system" ${USE_CCACHE})
 option(EMSCRIPTEN "Set to ON to build using EMSCRIPTEN" ${EMSCRIPTEN})
 
@@ -74,7 +75,9 @@ if(ODROID)
 	add_definitions(-DODROID)
 endif()
 
-if(USE_SDL3)
+if(SF3500)
+	add_definitions(-D_SF3500)
+elseif(USE_SDL3)
 	add_definitions(-D_SDL -D_SDL3)
 	find_package(SDL3 REQUIRED)
 	find_package(SDL3_mixer REQUIRED)
@@ -169,7 +172,18 @@ set(HCL_SOURCE_FILES
 	src/enemies/waterjumper.c
 	src/enemies/wizard.c
 )
-if(USE_SDL3)
+if(SF3500)
+	set(HCL_SDL_FILES
+		src/sf3500/audio.c
+		src/sf3500/input.c
+		src/sf3500/graphics.c
+		src/sf3500/system.c
+		src/sf3500/hwdisp.c
+		src/sf3500/hwaudio.c
+		src/sf3500/joykey.c
+		src/sf3500/stb_vorbis_impl.c
+	)
+elseif(USE_SDL3)
 	set(HCL_SDL_FILES
 		src/sdl3/audio.c
 		src/sdl3/input.c
@@ -206,7 +220,9 @@ if(PANDORA)
 endif(PANDORA)
 
 if(NOT EMSCRIPTEN)
-	if(USE_SDL3)
+	if(SF3500)
+		set (EXTRA_LIBS ${EXTRA_LIBS} pthread dl)
+	elseif(USE_SDL3)
 		set (EXTRA_LIBS ${EXTRA_LIBS} SDL3::SDL3)
 		set (EXTRA_LIBS ${EXTRA_LIBS} SDL3_mixer::SDL3_mixer)
 	elseif(USE_SDL2)

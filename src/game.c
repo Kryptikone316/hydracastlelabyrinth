@@ -95,7 +95,7 @@ int level = 0;
 int screenX = 5,
 	screenY = 2;
 
-#ifdef _SDL
+#if defined(_SDL) || defined(_SF3500)
 char savename[4096];
 char savemap[4096];
 #endif
@@ -252,7 +252,10 @@ void em_loop_fn(void* arg)
 
 void game()
 {
-#ifdef _SDL
+#ifdef _SF3500
+	strcpy(savename, "save.tmp");
+	strcpy(savemap, "save.map");
+#elif defined(_SDL)
 	#if defined(__amigaos4__) || defined(__MORPHOS__)
 	const char* home = "PROGDIR:";
 	#elif defined(EMSCRIPTEN)
@@ -1191,7 +1194,7 @@ void loadScreen()
 			strcat(dest, "romfs:/map/");
 		#elif defined(__amigaos4__) || defined(__MORPHOS__)
 			strcat(dest, "PROGDIR:data/map/");
-		#elif defined(_SDL)
+		#elif defined(_SDL) || defined(_SF3500)
 			strcat(dest, "data/map/");
 		#else
 			strcat(dest, "romfs/map/");
@@ -1286,7 +1289,7 @@ void loadScreen()
 		strcpy(dest, "romfs:/obj/");
 	#elif defined(__amigaos4__) || defined(__MORPHOS__)
 		strcpy(dest, "PROGDIR:data/obj/");
-	#elif defined(_SDL)
+	#elif defined(_SDL) || defined(_SF3500)
 		strcpy(dest, "data/obj/");
 	#else
 		strcpy(dest, "romfs/obj/");

@@ -31,6 +31,10 @@ void createSaveLocations()
 		mkdir("sdmc:/3ds/appdata/HydraCastleLabyrinth", 0777);
 		mkdir("sdmc:/3ds/appdata/HydraCastleLabyrinth/data", 0777);
 		mkdir("sdmc:/3ds/appdata/HydraCastleLabyrinth/map", 0777);
+	#elif defined(_SF3500)
+		/* cwd is the port's own install dir (set by the launch script, same
+		 * convention as every other port on this device) - config/save
+		 * files just live there directly, no subfolder or $HOME needed. */
 	#elif defined(_SDL)
 		char buff[4096];
 		#if defined(__amigaos4__) || defined(__MORPHOS__)

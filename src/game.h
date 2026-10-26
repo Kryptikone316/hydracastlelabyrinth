@@ -177,7 +177,7 @@ extern Platform* platforms[MAX_PLATFORMS];
 #define sndWater01 41
 #define sndWolf01 42
 
-#ifdef _SDL
+#if defined(_SDL) || defined(_SF3500)
 extern char savename[4096];
 extern char savemap[4096];
 #else

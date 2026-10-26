@@ -75,7 +75,7 @@ void loadText()
 	char fullPath[30];
 	#ifdef _3DS
 		strcpy(fullPath, "romfs:/");
-	#elif defined(_SDL)
+	#elif defined(_SDL) || defined(_SF3500)
 	strcpy(fullPath, "data/");
 	#else
 		strcpy(fullPath, "romfs/");

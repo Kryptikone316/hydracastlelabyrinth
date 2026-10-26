@@ -15,7 +15,7 @@ int initQDA()
 	FILE* f;
 	
 	char fullPath[80];
-	#ifdef _SDL
+	#if defined(_SDL) || defined(_SF3500)
 	strcpy(fullPath, "data/");
 	#else
 	strcpy(fullPath, "");
